@@ -48,8 +48,8 @@ The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running Ubuntu
 | github.com/nfnt/resize            |               |          |
 | github.com/disintegration/imaging |               |          |
 | ImageMagick -resize               |               |          |
-| ImageMagick -thumbnail            |               |          |
-| GraphicsMagick -thumbnail         |               |          |
+| ImageMagick -thumbnail            | 1m14.415s     | 341.35ms |
+| GraphicsMagick -thumbnail         | 2m56.610s     | 810.14ms |
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
