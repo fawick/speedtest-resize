@@ -181,6 +181,8 @@ func graphicsMagickThumbnail(origName, newName string) (int, int64) {
 func resize(files []string, desc string, m func(string, string) (int, int64)) string {
 	start := time.Now()
 
+	var total int64
+
 	for i, origPath := range files {
 		newPath := fmt.Sprintf("%s.thumb.%s.jpg", origPath, desc)
 		if printSingleFile {
@@ -190,8 +192,10 @@ func resize(files []string, desc string, m func(string, string) (int, int64)) st
 		n, o := m(origPath, newPath)
 		ratio := float64(n) / float64(o) * 100.0
 		dur := time.Since(imgStart)
+		total += int64(dur)
+		avg := time.Duration(total / int64(i+1))
 		if printSingleFile {
-			fmt.Printf("re-encoded to size=%d (%.1f%%) in %s\n", n, ratio, dur)
+			fmt.Printf("re-encoded to size=%d (%.1f%%) in %s. New avg=%s\n", n, ratio, dur, avg)
 		}
 	}
 	return timeTrack(start, desc, len(files))
@@ -211,8 +215,8 @@ func main() {
 		fmt.Println("no jpg files found in", dir)
 		return
 	}
-	if len(files) > 3 {
-		//files = files[0:3]
+	if len(files) > 10 {
+		files = files[0:10]
 	}
 	var results []string
 	if _, err := os.Stat("/usr/bin/gm"); err == nil {
