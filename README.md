@@ -57,3 +57,6 @@ hardly suprising, given that both  ImageMagick and GraphicsMagick have been arou
 as efficient as possible. Go and its image processing packages are still the new kids on the block, and while they work
 pretty neat for the occasional tweak of an image or two, I rather not use them as the default image processor
 in [gonagall](http://github.com/fawick/gonagall) yet. 
+
+TODO
+- Add competitor: https://github.com/gographics/imagick
