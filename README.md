@@ -35,22 +35,23 @@ supplying a parameter
     $ cd <jpg file folder>
     $ go run $GOPATH/src/speedtest-resize/main.go
 
-Im my test scenario all of these tools/packages are unleashed on a directory containing 217 JPG photo files, all of which 
-have a resolution of 5616x3744 pixels (aspect ratio 2:1, both landscape and portrait). For each tool/package and for all 
-files, the total time for loading the original file, scaling the image to a thumbnail of 150x100 pixels, and writing it 
-to a new JPG file is measured. In the end, the total runtime for processing all files and the average time per file is 
+Im my test scenario all of these tools/packages are unleashed on a directory containing JPG photo files, all of which 
+have a resolution of 5616x3744 pixels (aspect ratio 2:1, both landscape and portrait). 
+
+For each tool/package and for all files, the total time for loading the original file, scaling the image to a thumbnail of 150x100 pixels, and writing it 
+to a new JPG file is measured. In the end, the total runtime for processing the 10 first files and the average time per file is 
 printed for each tool/package.
 
 The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running Ubuntu 12.10. Here are the results:
 
-| Tables                            | Duration      | Average  |
-| --------------------------------- |:-------------:| --------:|
-| resize.go                         |               |          |
-| github.com/nfnt/resize            |               |          |
-| github.com/disintegration/imaging |               |          |
-| ImageMagick -resize               |               |          |
-| ImageMagick -thumbnail            | 1m14.415s     | 341.35ms |
-| GraphicsMagick -thumbnail         | 2m56.610s     | 810.14ms |
+| Tables                            | Average time per file  |
+| --------------------------------- | ----------------------:|
+| resize.go                         | 8.62s                  |
+| github.com/nfnt/resize            | 14.92s                 |
+| github.com/disintegration/imaging | 5.52s                  |
+| ImageMagick -resize               | 2.398s                 |
+| ImageMagick -thumbnail            | 359.22ms               |
+| GraphicsMagick -thumbnail         | 752.04ms               |
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
