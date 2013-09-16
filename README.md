@@ -20,7 +20,8 @@ with that Go package.
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the options 
 `-define "jpeg:size=300x300 -thumbnail 150x150>`. `-thumbnail` is considered to be faster than resize, and the `-define` 
 will reduce the size (in terms of memory footprint) of the original image on reading.
-- [GraphicsMagick convert](http://www.graphicsmagick.org/convert.html)
+- [GraphicsMagick convert](http://www.graphicsmagick.org/convert.html) with the options 
+`-define "jpeg:size=300x300 -thumbnail 150x150>`.
 
 To run the tests my test, `go get` the source and compile/run it:
 
@@ -57,6 +58,8 @@ hardly suprising, given that both  ImageMagick and GraphicsMagick have been arou
 as efficient as possible. Go and its image processing packages are still the new kids on the block, and while they work
 pretty neat for the occasional tweak of an image or two, I rather not use them as the default image processor
 in [gonagall](http://github.com/fawick/gonagall) yet. 
+
+NB: I was surprised to find that GraphicsMagick was slower than ImageMagick in my test scenario. 
 
 TODO
 - Add competitor: https://github.com/gographics/imagick
