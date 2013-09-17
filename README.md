@@ -22,6 +22,8 @@ with that Go package.
 will reduce the size (in terms of memory footprint) of the original image on reading.
 - [GraphicsMagick convert](http://www.graphicsmagick.org/convert.html) with the options 
 `-define "jpeg:size=300x300 -thumbnail 150x150>`.
+- https://github.com/gographics/imagick Go wrapper for the MagickWand API, again the Box algorithm is used for the 
+sake of comparing the results.
 
 To run the tests my test, `go get` the source and compile/run it:
 
@@ -52,6 +54,7 @@ The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running Ubuntu
 | ImageMagick -resize               | 2.398s                 |
 | ImageMagick -thumbnail            | 359.22ms               |
 | GraphicsMagick -thumbnail         | 752.04ms               |
+| github.com/gographics/imagick     | 1.13s                  |
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
@@ -60,7 +63,13 @@ as efficient as possible. Go and its image processing packages are still the new
 pretty neat for the occasional tweak of an image or two, I rather not use them as the default image processor
 in [gonagall](http://github.com/fawick/gonagall) yet. 
 
-NB: I was surprised to find that GraphicsMagick was slower than ImageMagick in my test scenario. 
+I was surprised to find that GraphicsMagick was slower than ImageMagick in my test scenario, as I expected it
+to be exactly the other way around with GraphicsMagick's fancy multi-processor algorithms.
 
-TODO
-- Add competitor: https://github.com/gographics/imagick
+While the imagick Wrapper is written in Go, it uses CGO bindings of the C MagickWand API. It outperforms the 
+pure-Go approaches (five times faster than http://github.com/disintegration/imaging) but it still slower than
+calling ImageMagick in an external process. Of the above 1.13 seconds, only around 275 millisecs were used for 
+resizing and saving an individual file, while over 850 ms were used by simply loading the file. I wonder how much 
+optimization can still be done in the imagick loading routines.
+
+

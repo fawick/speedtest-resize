@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/disintegration/imaging"
+	"github.com/gographics/imagick/imagick"
 	nfnt_resize "github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
@@ -178,6 +179,50 @@ func graphicsMagickThumbnail(origName, newName string) (int, int64) {
 	return int(newFileStat.Size()), origFileStat.Size()
 }
 
+func resizeMagickWand(origName, newName string) (int, int64) {
+	origFileStat, _ := os.Stat(origName)
+	var err error
+	mw := imagick.NewMagickWand()
+	defer mw.Destroy()
+
+	err = mw.ReadImage(origName)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	start := time.Now()
+
+	filter := imagick.FILTER_BOX
+	w := mw.GetImageWidth()
+	h := mw.GetImageHeight()
+	if w > h {
+		err = mw.ResizeImage(150, 100, filter, 1)
+	} else {
+		err = mw.ResizeImage(100, 150, filter, 1)
+	}
+	if err != nil {
+		fmt.Println(time.Since(start))
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+
+	err = mw.SetImageCompressionQuality(95)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+
+	err = mw.WriteImage(newName)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	fmt.Print("resizing part: ", time.Since(start), ", ")
+
+	newFileStat, _ := os.Stat(newName)
+	return int(newFileStat.Size()), origFileStat.Size()
+}
+
 func resize(files []string, desc string, m func(string, string) (int, int64)) string {
 	start := time.Now()
 
@@ -219,13 +264,20 @@ func main() {
 		files = files[0:10]
 	}
 	var results []string
+
+	imagick.Initialize()
+	defer imagick.Terminate()
+	results = append(results, resize(files, "magickwand_box", resizeMagickWand))
+
 	if _, err := os.Stat("/usr/bin/gm"); err == nil {
 		results = append(results, resize(files, "GraphicsMagick_thumbnail", graphicsMagickThumbnail))
 	}
+
 	if _, err := os.Stat("/usr/bin/convert"); err == nil {
 		results = append(results, resize(files, "ImageMagick_thumbnail", imageMagickThumbnail))
-		results = append(results, resize(files, "ImageMagick_resize", imageMagickResize))
+		//results = append(results, resize(files, "ImageMagick_resize", imageMagickResize))
 	}
+
 	results = append(results, resize(files, "imaging_Box", resizeImaging))
 	results = append(results, resize(files, "moustaschio_resize", moustachioResize))
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
