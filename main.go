@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	moustaschio_resize "resize"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -135,7 +136,15 @@ func imageMagickThumbnail(origName, newName string) (int, int64) {
 		"-thumbnail", "150x150>",
 		origName, newName,
 	}
-	cmd := exec.Command("/usr/bin/convert", args...)
+
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "linux":
+		cmd = exec.Command("/usr/bin/convert", args...)
+	case "windows":
+		path, _ := exec.LookPath("convert.exe")
+		cmd = exec.Command(path, args...)
+	}
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -151,7 +160,15 @@ func imageMagickResize(origName, newName string) (int, int64) {
 		"-resize", "150x150>",
 		origName, newName,
 	}
-	cmd := exec.Command("/usr/bin/convert", args...)
+
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "linux":
+		cmd = exec.Command("/usr/bin/convert", args...)
+	case "windows":
+		path, _ := exec.LookPath("convert.exe")
+		cmd = exec.Command(path, args...)
+	}
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -169,7 +186,16 @@ func graphicsMagickThumbnail(origName, newName string) (int, int64) {
 		"-thumbnail", "150x150>",
 		origName, newName,
 	}
-	cmd := exec.Command("/usr/bin/gm", args...)
+
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "linux":
+		cmd = exec.Command("/usr/bin/gm", args...)
+	case "windows":
+		path, _ := exec.LookPath("gm.exe")
+		cmd = exec.Command(path, args...)
+	}
+
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -269,13 +295,25 @@ func main() {
 	defer imagick.Terminate()
 	results = append(results, resize(files, "magickwand_box", resizeMagickWand))
 
-	if _, err := os.Stat("/usr/bin/gm"); err == nil {
-		results = append(results, resize(files, "GraphicsMagick_thumbnail", graphicsMagickThumbnail))
-	}
+	switch runtime.GOOS {
+	case "linux":
+		if _, err := os.Stat("/usr/bin/gm"); err == nil {
+			results = append(results, resize(files, "GraphicsMagick_thumbnail", graphicsMagickThumbnail))
+		}
 
-	if _, err := os.Stat("/usr/bin/convert"); err == nil {
-		results = append(results, resize(files, "ImageMagick_thumbnail", imageMagickThumbnail))
-		//results = append(results, resize(files, "ImageMagick_resize", imageMagickResize))
+		if _, err := os.Stat("/usr/bin/convert"); err == nil {
+			results = append(results, resize(files, "ImageMagick_thumbnail", imageMagickThumbnail))
+			results = append(results, resize(files, "ImageMagick_resize", imageMagickResize))
+		}
+	case "windows":
+		if _, err := exec.LookPath("gm.exe"); err == nil {
+			results = append(results, resize(files, "GraphicsMagick_thumbnail", graphicsMagickThumbnail))
+		}
+
+		if _, err := exec.LookPath("convert.exe"); err == nil {
+			results = append(results, resize(files, "ImageMagick_thumbnail", imageMagickThumbnail))
+			results = append(results, resize(files, "ImageMagick_resize", imageMagickResize))
+		}
 	}
 
 	results = append(results, resize(files, "imaging_Box", resizeImaging))
