@@ -25,8 +25,12 @@ will reduce the size (in terms of memory footprint) of the original image on rea
 - https://github.com/gographics/imagick Go wrapper for the MagickWand API, again the Box algorithm is used for the 
 sake of comparing the results.
 
-To run the tests my test, `go get` the source and compile/run it:
+To run the tests, first fetch `resize.go` manually, then `go get` the source and compile/run it:
 
+    $ cd $GOPATH/src
+    $ mkdir resize
+    $ cd resize
+    $ curl -O https://appengine-go.googlecode.com/hg/example/moustachio/resize/resize.go
     $ go get github.com/fawick/speedtest-resize
     $ cd $GOPATH/src/speedtest-resize
     $ go run main.go <jpg file folder>
