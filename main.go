@@ -3,9 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/disintegration/imaging"
-	"github.com/gographics/imagick/imagick"
-	nfnt_resize "github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
 	"io/ioutil"
@@ -15,6 +12,11 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/disintegration/imaging"
+	"github.com/gographics/imagick/imagick"
+	"github.com/lazywei/go-opencv/opencv"
+	nfnt_resize "github.com/nfnt/resize"
 )
 
 func scanDir(path string) (files []string, err error) {
@@ -248,6 +250,16 @@ func resizeMagickWand(origName, newName string) (int, int64) {
 	newFileStat, _ := os.Stat(newName)
 	return int(newFileStat.Size()), origFileStat.Size()
 }
+func resizeOpenCv(origName, newName string) (int, int64) {
+	iplImg := opencv.LoadImage(origName)
+	if iplImg == nil {
+		panic("LoadImage fail")
+	}
+	defer iplImg.Release()
+	resizedIplImg := opencv.Resize(iplImg, 150, 0, 0)
+	opencv.SaveImage(newName, resizedIplImg, 0)
+	return 1, 1
+}
 
 func resize(files []string, desc string, m func(string, string) (int, int64)) string {
 	start := time.Now()
@@ -319,6 +331,7 @@ func main() {
 	results = append(results, resize(files, "imaging_Box", resizeImaging))
 	results = append(results, resize(files, "moustaschio_resize", moustachioResize))
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
+	results = append(results, resize(files, "OpenCv", resizeOpenCv))
 
 	for _, s := range results {
 		fmt.Println(s)
