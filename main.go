@@ -258,7 +258,11 @@ func resizeOpenCv(origName, newName string) (int, int64) {
 	defer iplImg.Release()
 	resizedIplImg := opencv.Resize(iplImg, 150, 0, 0)
 	opencv.SaveImage(newName, resizedIplImg, 0)
-	return 1, 1
+
+	origFileStat, _ := os.Stat(origName)
+	newFileStat, _ := os.Stat(newName)
+
+	return int(newFileStat.Size()), origFileStat.Size()
 }
 
 func resize(files []string, desc string, m func(string, string) (int, int64)) string {
