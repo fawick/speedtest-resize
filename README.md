@@ -24,6 +24,9 @@ will reduce the size (in terms of memory footprint) of the original image on rea
 `-define "jpeg:size=300x300 -thumbnail 150x150>`.
 - https://github.com/gographics/imagick Go wrapper for the MagickWand API, again the Box algorithm is used for the 
 sake of comparing the results.
+- https://github.com/lazywei/go-opencv Go binding for OpenCV, using the fastest algorithm.
+
+### Installation
 
 To run the tests, first fetch `resize.go` manually, then `go get` the source and compile/run it:
 
@@ -40,6 +43,8 @@ supplying a parameter
 
     $ cd <jpg file folder>
     $ go run $GOPATH/src/speedtest-resize/main.go
+
+### Benchmark
 
 Im my test scenario all of these tools/packages are unleashed on a directory containing JPG photo files, all of which 
 have a resolution of 5616x3744 pixels (aspect ratio 2:1, both landscape and portrait). 
@@ -59,6 +64,19 @@ The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running Ubuntu
 | ImageMagick -thumbnail            | 359.22ms               |
 | GraphicsMagick -thumbnail         | 752.04ms               |
 | github.com/gographics/imagick     | 1.13s                  |
+
+--------
+
+Yet another scenario ran by [lazywei](https://github.com/lazywei), 2.5GHz Intel Core i5, Mac OS X 10.9.1:
+
+| Tables               | Average time per file  |
+| -------------------- | ----------------------:|
+| magickwand_box       |  155.371531ms          |
+| imaging_Box          |  463.459339ms          |
+| moustaschio_resize   |  719.051885ms          |
+| Nfnt_NearestNeighbor |  1.436507946s          |
+| OpenCv               |   97.353041ms          |
+
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
