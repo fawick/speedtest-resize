@@ -84,10 +84,10 @@ Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel 
 
 | Tables               | Average time per file  |
 | -------------------- | ----------------------:|
-| rez_bilinear         |  167.40958ms           |
-| imaging_Box          |  280.71606ms           |
-| moustaschio_resize   |  400.92293ms           |
-| Nfnt_NearestNeighbor |  500.0286ms            |
+| rez_bilinear         |  148ms                 |
+| imaging_Box          |  243ms                 |
+| moustaschio_resize   |  407ms                 |
+| Nfnt_NearestNeighbor |  233ms                 |
 
 --------
 
