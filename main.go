@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bamiaux/rez"
 	"github.com/disintegration/imaging"
 	"github.com/gographics/imagick/imagick"
 	"github.com/lazywei/go-opencv/opencv"
@@ -70,6 +71,54 @@ func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFuncti
 
 func resizeNfntNearestNeighbor(origName, newName string) (int, int64) {
 	return resizeNfnt(origName, newName, nfnt_resize.NearestNeighbor)
+}
+
+func getSize(a, b, c int) int {
+	d := a * b / c
+	return (d + 1) & -1
+}
+
+func resizeRez(origName, newName string, filter rez.Filter) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	var resized image.Image
+	src, ok := origImage.(*image.YCbCr)
+	if !ok {
+		fmt.Println("input picture is not ycbcr")
+		return 0, origFileStat.Size()
+	}
+
+	p := origImage.Bounds().Size()
+	w, h := 150, getSize(150, p.Y, p.X)
+	if p.X < p.Y {
+		w, h = getSize(150, p.X, p.Y), 150
+	}
+	resized = image.NewYCbCr(image.Rect(0, 0, w, h), src.SubsampleRatio)
+	err := rez.Convert(resized, origImage, filter)
+	if err != nil {
+		fmt.Println("unable to convert picture", err)
+		return 0, origFileStat.Size()
+	}
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, resized, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+
+	return blen, origFileStat.Size()
+}
+
+func resizeRezBilinear(origName, newName string) (int, int64) {
+	return resizeRez(origName, newName, rez.NewBilinearFilter())
 }
 
 func moustachioResample(origName, newName string) (int, int64) {
@@ -336,6 +385,7 @@ func main() {
 	results = append(results, resize(files, "moustaschio_resize", moustachioResize))
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
 	results = append(results, resize(files, "OpenCv", resizeOpenCv))
+	results = append(results, resize(files, "rez_bilinear", resizeRezBilinear))
 
 	for _, s := range results {
 		fmt.Println(s)

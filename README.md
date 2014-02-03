@@ -25,6 +25,7 @@ will reduce the size (in terms of memory footprint) of the original image on rea
 - https://github.com/gographics/imagick Go wrapper for the MagickWand API, again the Box algorithm is used for the 
 sake of comparing the results.
 - https://github.com/lazywei/go-opencv Go binding for OpenCV, using the fastest algorithm.
+- https://github.com/bamiauz/rez, pure go resizer, using bilinear interpolation in these tests
 
 ### Installation
 
@@ -77,6 +78,18 @@ Yet another scenario ran by [lazywei](https://github.com/lazywei), 2.5GHz Intel 
 | Nfnt_NearestNeighbor |  1.436507946s          |
 | OpenCv               |   97.353041ms          |
 
+--------
+
+Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel Core i5, win 7:
+
+| Tables               | Average time per file  |
+| -------------------- | ----------------------:|
+| rez_bilinear         |  148ms                 |
+| imaging_Box          |  243ms                 |
+| moustaschio_resize   |  407ms                 |
+| Nfnt_NearestNeighbor |  233ms                 |
+
+--------
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
