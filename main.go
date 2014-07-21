@@ -50,12 +50,8 @@ func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFuncti
 	origFile.Close()
 
 	var resized image.Image
-	p := origImage.Bounds().Size()
-	if p.X > p.Y {
-		resized = nfnt_resize.Resize(150, 0, origImage, interp)
-	} else {
-		resized = nfnt_resize.Resize(0, 150, origImage, interp)
-	}
+	resized = nfnt_resize.Thumbnail(150, 150, origImage, interp)
+
 	b := new(bytes.Buffer)
 	jpeg.Encode(b, resized, nil)
 	blen := b.Len()
@@ -160,8 +156,8 @@ func resizeMoustachio(origName, newName string, method func(image.Image, image.R
 func resizeImaging(origName, newName string) (int, int64) {
 	origFileStat, _ := os.Stat(origName)
 	origImage, _ := imaging.Open(origName)
-	var resized image.Image
 
+	var resized image.Image
 	resized = imaging.Fit(origImage, 150, 150, imaging.Box)
 
 	b := new(bytes.Buffer)
