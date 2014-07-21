@@ -8,11 +8,11 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	moustaschio_resize "resize"
 	"runtime"
 	"strings"
 	"time"
 
+	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
 	"github.com/bamiaux/rez"
 	"github.com/disintegration/imaging"
 	"github.com/gographics/imagick/imagick"
