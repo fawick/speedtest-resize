@@ -14,6 +14,7 @@ import (
 
 	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
 	"github.com/bamiaux/rez"
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	"github.com/gographics/imagick/imagick"
 	"github.com/lazywei/go-opencv/opencv"
@@ -178,6 +179,36 @@ func resizeImaging(origName, newName string) (int, int64) {
 	b.WriteTo(cacheFile)
 	return blen, origFileStat.Size()
 
+}
+
+func resizeGift(origName, newName string) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	var g = gift.New()
+
+	p := origImage.Bounds().Size()
+	if p.X > p.Y {
+		g.Add(gift.Resize(150, 0, gift.BoxResampling))
+	} else {
+		g.Add(gift.Resize(0, 150, gift.BoxResampling))
+	}
+	resized := image.NewRGBA(g.Bounds(origImage.Bounds()))
+	g.Draw(resized, origImage)
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, resized, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+	return blen, origFileStat.Size()
 }
 
 func imageMagickThumbnail(origName, newName string) (int, int64) {
@@ -383,6 +414,7 @@ func main() {
 	}
 
 	results = append(results, resize(files, "imaging_Box", resizeImaging))
+	results = append(results, resize(files, "gift_Box", resizeGift))
 	results = append(results, resize(files, "moustaschio_resize", moustachioResize))
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
 	results = append(results, resize(files, "OpenCv", resizeOpenCv))
