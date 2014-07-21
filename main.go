@@ -299,6 +299,7 @@ func resizeMagickWand(origName, newName string) (int, int64) {
 	newFileStat, _ := os.Stat(newName)
 	return int(newFileStat.Size()), origFileStat.Size()
 }
+
 func resizeOpenCv(origName, newName string) (int, int64) {
 	iplImg := opencv.LoadImage(origName)
 	if iplImg == nil {
