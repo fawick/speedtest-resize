@@ -161,12 +161,9 @@ func resizeImaging(origName, newName string) (int, int64) {
 	origFileStat, _ := os.Stat(origName)
 	origImage, _ := imaging.Open(origName)
 	var resized image.Image
-	p := origImage.Bounds().Size()
-	if p.X > p.Y {
-		resized = imaging.Resize(origImage, 150, 100, imaging.Box)
-	} else {
-		resized = imaging.Resize(origImage, 100, 150, imaging.Box)
-	}
+
+	resized = imaging.Fit(origImage, 150, 150, imaging.Box)
+
 	b := new(bytes.Buffer)
 	jpeg.Encode(b, resized, nil)
 	blen := b.Len()
