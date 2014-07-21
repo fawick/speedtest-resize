@@ -14,7 +14,9 @@ ImageMagick and GraphicsMagick. The competitors are
 which performs a Nearest-Neighbor scaling
 - https://github.com/nfnt/resize, Pure golang image resizing, more precisely only Nearest-Neighbor interpolation that comes 
 with that Go package.
-- https://github.com/disintegration/imaging Again, I use one of the fastests algorithms of the package. Here, it's called 
+- https://github.com/disintegration/gift Again, I use one of the fastest algorithms of the package. Here, it's called 
+'Box'
+- https://github.com/disintegration/imaging Again, I use one of the fastest algorithms of the package. Here, it's called 
 'Box'
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the options `-resize 150x150>`
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the options 
@@ -89,7 +91,7 @@ Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel 
 
 So, what is to learn from that? While all of the currently existing pure-Go-language solutions do a pretty good job 
 in generating good-looking thumbnails, they are much slower than the veteran dedicated image processing toolboxes. That is 
-hardly suprising, given that both  ImageMagick and GraphicsMagick have been around for decades and have been optimized to work
+hardly surprising, given that both ImageMagick and GraphicsMagick have been around for decades and have been optimized to work
 as efficient as possible. Go and its image processing packages are still the new kids on the block, and while they work
 pretty neat for the occasional tweak of an image or two, I rather not use them as the default image processor
 in [gonagall](http://github.com/fawick/gonagall) yet. 
