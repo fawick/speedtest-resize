@@ -29,13 +29,9 @@ sake of comparing the results.
 
 ### Installation
 
-To run the tests, first fetch `resize.go` manually, then `go get` the source and compile/run it:
+To run the tests `go get` the source and compile/run it:
 
-    $ cd $GOPATH/src
-    $ mkdir resize
-    $ cd resize
-    $ curl -O https://appengine-go.googlecode.com/hg/example/moustachio/resize/resize.go
-    $ go get github.com/fawick/speedtest-resize
+    $ go get -u github.com/fawick/speedtest-resize
     $ cd $GOPATH/src/speedtest-resize
     $ go run main.go <jpg file folder>
 

@@ -8,11 +8,11 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	moustaschio_resize "resize"
 	"runtime"
 	"strings"
 	"time"
 
+	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
 	"github.com/bamiaux/rez"
 	"github.com/disintegration/imaging"
 	"github.com/gographics/imagick/imagick"
@@ -299,6 +299,7 @@ func resizeMagickWand(origName, newName string) (int, int64) {
 	newFileStat, _ := os.Stat(newName)
 	return int(newFileStat.Size()), origFileStat.Size()
 }
+
 func resizeOpenCv(origName, newName string) (int, int64) {
 	iplImg := opencv.LoadImage(origName)
 	if iplImg == nil {
