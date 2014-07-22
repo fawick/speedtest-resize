@@ -14,6 +14,7 @@ import (
 
 	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
 	"github.com/bamiaux/rez"
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	"github.com/gographics/imagick/imagick"
 	"github.com/lazywei/go-opencv/opencv"
@@ -49,12 +50,8 @@ func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFuncti
 	origFile.Close()
 
 	var resized image.Image
-	p := origImage.Bounds().Size()
-	if p.X > p.Y {
-		resized = nfnt_resize.Resize(150, 0, origImage, interp)
-	} else {
-		resized = nfnt_resize.Resize(0, 150, origImage, interp)
-	}
+	resized = nfnt_resize.Thumbnail(150, 150, origImage, interp)
+
 	b := new(bytes.Buffer)
 	jpeg.Encode(b, resized, nil)
 	blen := b.Len()
@@ -159,13 +156,10 @@ func resizeMoustachio(origName, newName string, method func(image.Image, image.R
 func resizeImaging(origName, newName string) (int, int64) {
 	origFileStat, _ := os.Stat(origName)
 	origImage, _ := imaging.Open(origName)
+
 	var resized image.Image
-	p := origImage.Bounds().Size()
-	if p.X > p.Y {
-		resized = imaging.Resize(origImage, 150, 100, imaging.Box)
-	} else {
-		resized = imaging.Resize(origImage, 100, 150, imaging.Box)
-	}
+	resized = imaging.Fit(origImage, 150, 150, imaging.Box)
+
 	b := new(bytes.Buffer)
 	jpeg.Encode(b, resized, nil)
 	blen := b.Len()
@@ -178,6 +172,36 @@ func resizeImaging(origName, newName string) (int, int64) {
 	b.WriteTo(cacheFile)
 	return blen, origFileStat.Size()
 
+}
+
+func resizeGift(origName, newName string) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	var g = gift.New()
+
+	p := origImage.Bounds().Size()
+	if p.X > p.Y {
+		g.Add(gift.Resize(150, 0, gift.BoxResampling))
+	} else {
+		g.Add(gift.Resize(0, 150, gift.BoxResampling))
+	}
+	resized := image.NewRGBA(g.Bounds(origImage.Bounds()))
+	g.Draw(resized, origImage)
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, resized, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+	return blen, origFileStat.Size()
 }
 
 func imageMagickThumbnail(origName, newName string) (int, int64) {
@@ -383,6 +407,7 @@ func main() {
 	}
 
 	results = append(results, resize(files, "imaging_Box", resizeImaging))
+	results = append(results, resize(files, "gift_Box", resizeGift))
 	results = append(results, resize(files, "moustaschio_resize", moustachioResize))
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
 	results = append(results, resize(files, "OpenCv", resizeOpenCv))
