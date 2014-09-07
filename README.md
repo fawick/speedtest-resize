@@ -32,7 +32,9 @@ terms of memory footprint) of the original image on reading.
 - https://github.com/bamiauz/rez, pure go resizer, using bilinear interpolation
   in these tests
 - https://github.com/DAddYE/vips, bindings for libvips
-  (https://github.com/jcupitt/libvips)
+  (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
+- External command `vipsthumbnail` with parameters `-s 150`
+  (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - [resize.go](https://code.google.com/p/appengine-go/source/browse/example/moustachio/resize/resize.go)
   by the Go authors, which performs a Nearest-Neighbor scaling
 
@@ -83,8 +85,9 @@ Ubuntu 14.04. Here are the results:
 
 | Tables                            | Time (file avg.)  | Pure Go |
 | --------------------------------- | -----------------:| ------- |
+| `vipsthumbnail`                   | 0.125s            |         |
 | ImageMagick -thumbnail            | 0.325s            |         |
-| VIPS                              | 0.354s            |         |
+| github.com/DAddYE/vips            | 0.354s            |         |
 | GraphicsMagick -thumbnail         | 0.752s            |         |
 | github.com/gographics/imagick     | 1.100s            |         |
 | ImageMagick -resize               | 2.286s            |         |
@@ -141,4 +144,4 @@ millisecs were used for resizing and saving an individual file, while over 850
 ms were used by simply loading the file. I wonder how much optimization can
 still be done in the imagick loading routines.
 
-
+Holy cow! `vipsthumbnail` __is__ blazing fast.

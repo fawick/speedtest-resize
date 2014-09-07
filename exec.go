@@ -21,7 +21,31 @@ func init() {
 	} else {
 		fmt.Println("Cannot find convert in PATH, will skip ImageMagick tests")
 	}
+	if _, err := exec.LookPath("vipsthumbnail"); err == nil {
+		RegisterResizer("vipsthumbnail", vipsthumbnail)
+	} else {
+		fmt.Println("Cannot find vipsthumbnail in PATH, will skip ImageMagick tests")
+	}
+}
 
+func vipsthumbnail(origName, newName string) (int, int64) {
+	origFileStat, _ := os.Stat(origName)
+	var args = []string{
+		"-s", "150",
+		"-o", newName,
+		origName,
+	}
+
+	var cmd *exec.Cmd
+	path, _ := exec.LookPath("vipsthumbnail")
+	cmd = exec.Command(path, args...)
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	newFileStat, _ := os.Stat(newName)
+	return int(newFileStat.Size()), origFileStat.Size()
 }
 
 func imageMagickThumbnail(origName, newName string) (int, int64) {
