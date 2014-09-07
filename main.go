@@ -13,6 +13,7 @@ import (
 	"time"
 
 	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
+	"github.com/DAddYE/vips"
 	"github.com/bamiaux/rez"
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
@@ -339,6 +340,48 @@ func resizeOpenCv(origName, newName string) (int, int64) {
 	return int(newFileStat.Size()), origFileStat.Size()
 }
 
+func resizeVips(origName, newName string) (int, int64) {
+	origFileStat, _ := os.Stat(origName)
+	options := vips.Options{
+		Width:        150,
+		Height:       150,
+		Crop:         false,
+		Extend:       vips.EXTEND_WHITE,
+		Interpolator: vips.BILINEAR,
+		Gravity:      vips.CENTRE,
+		Quality:      95,
+	}
+	origFile, err := os.Open(origName)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	defer origFile.Close()
+	buf, err := ioutil.ReadAll(origFile)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	buf, err = vips.Resize(buf, options)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	cacheFile, err := os.Create(newName)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	defer cacheFile.Close()
+	_, err = cacheFile.Write(buf)
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+
+	return int(len(buf)), origFileStat.Size()
+}
+
 func resize(files []string, desc string, m func(string, string) (int, int64)) string {
 	start := time.Now()
 
@@ -412,6 +455,7 @@ func main() {
 	results = append(results, resize(files, "Nfnt_NearestNeighbor", resizeNfntNearestNeighbor))
 	results = append(results, resize(files, "OpenCv", resizeOpenCv))
 	results = append(results, resize(files, "rez_bilinear", resizeRezBilinear))
+	results = append(results, resize(files, "vips", resizeVips))
 
 	for _, s := range results {
 		fmt.Println(s)

@@ -31,6 +31,8 @@ terms of memory footprint) of the original image on reading.
   algorithm.
 - https://github.com/bamiauz/rez, pure go resizer, using bilinear interpolation
   in these tests
+- https://github.com/DAddYE/vips, bindings for libvips
+  (https://github.com/jcupitt/libvips)
 
 Some implementations are no longer available and have been removed:
 
@@ -69,6 +71,7 @@ Ubuntu 14.04. Here are the results:
 | Tables                            | Time (file avg.)  | Pure Go | 
 | --------------------------------- | -----------------:| ------- |
 | ImageMagick -thumbnail            | 0.325s            |         |
+| VIPS                              | 0.354s            |         |
 | GraphicsMagick -thumbnail         | 0.752s            |         |
 | github.com/gographics/imagick     | 1.100s            |         |  
 | ImageMagick -resize               | 2.286s            |         |
