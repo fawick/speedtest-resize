@@ -33,9 +33,6 @@ terms of memory footprint) of the original image on reading.
   in these tests
 - https://github.com/DAddYE/vips, bindings for libvips
   (https://github.com/jcupitt/libvips)
-
-Some implementations are no longer available and have been removed:
-
 - [resize.go](https://code.google.com/p/appengine-go/source/browse/example/moustachio/resize/resize.go)
   by the Go authors, which performs a Nearest-Neighbor scaling
 
@@ -78,6 +75,7 @@ Ubuntu 14.04. Here are the results:
 | rez_bilinear                      | 2.942s            |    X    |
 | github.com/nfnt/resize            | 3.509s            |    X    |
 | github.com/disintegration/imaging | 4.694s            |    X    |
+| Moustachio 'resize.go'            | 7.366s            |    X    |
 
 --------
 
