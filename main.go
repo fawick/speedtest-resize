@@ -1,10 +1,12 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
-
+	"sort"
 	"strings"
 	"time"
 )
@@ -23,12 +25,29 @@ func scanDir(path string) (files []string, hello error) {
 	return
 }
 
-func timeTrack(start time.Time, name string, n int) string {
-	elapsed := time.Since(start)
-	avg := time.Duration(int64(elapsed) / int64(n))
-	s := fmt.Sprintf("%s took %s, file average %s\n", name, elapsed, avg)
-	fmt.Println(s)
-	return s
+type ResizerStat struct {
+	Desc      string        // Description string
+	Total     time.Duration // Total duration for all files
+	Processed int           // Number of processed files
+}
+
+func (s ResizerStat) Avg() time.Duration {
+	return s.Total / time.Duration(s.Processed)
+}
+
+type ResizerStats []*ResizerStat
+
+func (s ResizerStats) Len() int      { return len(s) }
+func (s ResizerStats) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+type ByAverage struct{ ResizerStats }
+
+func (b ByAverage) Less(i, j int) bool { return b.ResizerStats[i].Avg() < b.ResizerStats[j].Avg() }
+
+func (s ResizerStats) WriteTo(w io.Writer) {
+	for _, st := range s {
+		fmt.Fprintf(w, "%s: %.3fs\n", st.Desc, float64(st.Avg())/1e9)
+	}
 }
 
 type ResizerFunc func(oldName, newName string) (int, int64)
@@ -40,30 +59,26 @@ type Resizer struct {
 	Func ResizerFunc
 }
 
-func (r Resizer) Resize(files []string) string {
-	start := time.Now()
-
-	var total int64
-
+func (r Resizer) Resize(files []string) *ResizerStat {
+	s := ResizerStat{Desc: r.Desc}
 	for i, origPath := range files {
 		newPath := fmt.Sprintf("%s.thumb.%s.jpg", origPath, r.Desc)
-		if printSingleFile {
-			fmt.Printf("File %d: ", i)
+		if *verbose {
+			fmt.Printf("File %d w/ %s: ", i+1, s.Desc)
 		}
 		imgStart := time.Now()
 		n, o := r.Func(origPath, newPath)
 		ratio := float64(n) / float64(o) * 100.0
 		dur := time.Since(imgStart)
-		total += int64(dur)
-		avg := time.Duration(total / int64(i+1))
-		if printSingleFile {
+		s.Processed++
+		s.Total += dur
+		avg := s.Total / time.Duration(s.Processed)
+		if *verbose {
 			fmt.Printf("re-encoded to size=%d (%.1f%%) in %s. New avg=%s\n", n, ratio, dur, avg)
 		}
 	}
-	return timeTrack(start, r.Desc, len(files))
+	return &s
 }
-
-var printSingleFile bool
 
 var RegisteredResizers []Resizer
 
@@ -71,13 +86,15 @@ func RegisterResizer(d string, f func(oldName, newName string) (int, int64)) {
 	RegisteredResizers = append(RegisteredResizers, Resizer{Desc: d, Func: f})
 }
 
+var verbose = flag.Bool("verbose", false, "Print statistics for every single file processed")
+
 func main() {
+	flag.Parse()
 	dir := "."
-	if len(os.Args) > 1 {
-		fmt.Println(os.Args)
-		dir = os.Args[1]
+	if len(flag.Args()) > 1 {
+		fmt.Println(flag.Args())
+		dir = flag.Args()[1]
 	}
-	printSingleFile = true
 	files, _ := scanDir(dir)
 	if len(files) == 0 {
 		fmt.Println("no jpg files found in", dir)
@@ -86,13 +103,12 @@ func main() {
 	if len(files) > 10 {
 		files = files[0:10]
 	}
-	var results []string
 
+	var results ResizerStats
 	for _, r := range RegisteredResizers {
 		results = append(results, r.Resize(files))
 	}
 
-	for _, s := range results {
-		fmt.Println(s)
-	}
+	sort.Sort(ByAverage{results})
+	results.WriteTo(os.Stdout)
 }
