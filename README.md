@@ -56,8 +56,8 @@ available:
 
 | Tag         | Description                                             |
 | ----------- | ------------------------------------------------------- |
-| `opencv`    | Include OpenCV in the tests.                            |
-| `imagick`   | Include `lazywei/go-opencv` in the tests.               |
+| `opencv`    | Include `lazywei/go-opencv` in the tests.               |
+| `imagick`   | Include `gographics/imagick` in the tests.              |
 | `vips`      | Include `DAddYE/vips in the tests`.                     |
 | `all`       | An alias for `opencv imagick vips`.                     |
 | `nopure`    | Don't include the Pure Golang packages                  |
