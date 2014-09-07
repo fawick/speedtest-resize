@@ -6,18 +6,22 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"runtime"
 )
 
 func init() {
 	// Program checks are supposed to work on all systems
 	if _, err := exec.LookPath("gm"); err == nil {
 		RegisterResizer("GraphicsMagick_thumbnail", graphicsMagickThumbnail)
+	} else {
+		fmt.Println("Cannot find gm in PATH, will skip GraphicsMagick tests")
 	}
 	if _, err := exec.LookPath("convert"); err == nil {
 		RegisterResizer("ImageMagick_thumbnail", imageMagickThumbnail)
 		RegisterResizer("ImageMagick_resize", imageMagickResize)
+	} else {
+		fmt.Println("Cannot find convert in PATH, will skip ImageMagick tests")
 	}
+
 }
 
 func imageMagickThumbnail(origName, newName string) (int, int64) {
@@ -29,13 +33,8 @@ func imageMagickThumbnail(origName, newName string) (int, int64) {
 	}
 
 	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "linux":
-		cmd = exec.Command("/usr/bin/convert", args...)
-	case "windows":
-		path, _ := exec.LookPath("convert.exe")
-		cmd = exec.Command(path, args...)
-	}
+	path, _ := exec.LookPath("convert")
+	cmd = exec.Command(path, args...)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -53,13 +52,8 @@ func imageMagickResize(origName, newName string) (int, int64) {
 	}
 
 	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "linux":
-		cmd = exec.Command("/usr/bin/convert", args...)
-	case "windows":
-		path, _ := exec.LookPath("convert.exe")
-		cmd = exec.Command(path, args...)
-	}
+	path, _ := exec.LookPath("convert")
+	cmd = exec.Command(path, args...)
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
@@ -79,13 +73,8 @@ func graphicsMagickThumbnail(origName, newName string) (int, int64) {
 	}
 
 	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "linux":
-		cmd = exec.Command("/usr/bin/gm", args...)
-	case "windows":
-		path, _ := exec.LookPath("gm.exe")
-		cmd = exec.Command(path, args...)
-	}
+	path, _ := exec.LookPath("gm")
+	cmd = exec.Command(path, args...)
 
 	err := cmd.Run()
 	if err != nil {
