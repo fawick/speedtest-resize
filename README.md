@@ -10,7 +10,7 @@ bandwidth-friendly sized copies from high-resolution original photo files.
 
 In this project I compare the speed of a few selected image resizing algorithms
 with each other as well as with ImageMagick and GraphicsMagick. The competitors
-are 
+are
 
 - https://github.com/nfnt/resize, Pure golang image resizing, more precisely
   only Nearest-Neighbor interpolation that comes with that Go package.
@@ -40,21 +40,37 @@ terms of memory footprint) of the original image on reading.
 
 To run the tests `go get` the source and compile/run it:
 
-    $ go get -u github.com/fawick/speedtest-resize
+    $ go get -u github.com/fawick/speedtest-resize -tags all
     $ cd $GOPATH/src/speedtest-resize
     $ go run main.go <jpg file folder>
 
-Alternatively, call the go command (or the compiled binary) from the image folder without 
-supplying a parameter
+Alternatively, call the go command (or the compiled binary) from the image
+folder without supplying a parameter
 
     $ cd <jpg file folder>
     $ go run $GOPATH/src/speedtest-resize/main.go
+
+A the package requires different 3rdparty libraries to be installed, you can
+use build tags to control what libraries to use. The following build tags are
+available:
+
+| Tag         | Description                                             |
+| ----------- | ------------------------------------------------------- |
+| `opencv`    | Include OpenCV in the tests.                            |
+| `imagick`   | Include `lazywei/go-opencv` in the tests.               |
+| `vips`      | Include `DAddYE/vips in the tests`.                     |
+| `all`       | An alias for `opencv imagick vips`.                     |
+| `nopure`    | Don't include the Pure Golang packages                  |
+| `noexec`    | Don't run the tests that execute other programs.        |
+
+The default `go get` without any tags will try the packages that are pure go
+and the external programs but not use any non-Go library.
 
 ### Benchmark
 
 Im my test scenario all of these tools/packages are unleashed on a directory
 containing JPG photo files, all of which have a resolution of 5616x3744 pixels
-(aspect ratio 2:1, both landscape and portrait). 
+(aspect ratio 2:1, both landscape and portrait).
 
 For each tool/package and for all files, the total time for loading the
 original file, scaling the image to a thumbnail of 150x100 pixels, and writing
@@ -65,15 +81,16 @@ tool/package.
 The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running
 Ubuntu 14.04. Here are the results:
 
-| Tables                            | Time (file avg.)  | Pure Go | 
+| Tables                            | Time (file avg.)  | Pure Go |
 | --------------------------------- | -----------------:| ------- |
 | ImageMagick -thumbnail            | 0.325s            |         |
 | VIPS                              | 0.354s            |         |
 | GraphicsMagick -thumbnail         | 0.752s            |         |
-| github.com/gographics/imagick     | 1.100s            |         |  
+| github.com/gographics/imagick     | 1.100s            |         |
 | ImageMagick -resize               | 2.286s            |         |
 | rez_bilinear                      | 2.942s            |    X    |
 | github.com/nfnt/resize            | 3.509s            |    X    |
+| github.com/disintegration/gift    | 4.642s            |    X    |
 | github.com/disintegration/imaging | 4.694s            |    X    |
 | Moustachio 'resize.go'            | 7.366s            |    X    |
 
@@ -110,7 +127,7 @@ GraphicsMagick have been around for decades and have been optimized to work as
 efficient as possible. Go and its image processing packages are still the new
 kids on the block, and while they work pretty neat for the occasional tweak of
 an image or two, I rather not use them as the default image processor in
-[gonagall](http://github.com/fawick/gonagall) yet. 
+[gonagall](http://github.com/fawick/gonagall) yet.
 
 I was surprised to find that GraphicsMagick was slower than ImageMagick in my
 test scenario, as I expected it to be exactly the other way around with
