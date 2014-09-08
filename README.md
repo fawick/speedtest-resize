@@ -29,7 +29,7 @@ terms of memory footprint) of the original image on reading.
   again the Box algorithm is used for the sake of comparing the results.
 - https://github.com/lazywei/go-opencv Go binding for OpenCV, using the fastest
   algorithm.
-- https://github.com/bamiauz/rez, pure go resizer, using bilinear interpolation
+- https://github.com/bamiaux/rez, pure go resizer, using bilinear interpolation
   in these tests
 - https://github.com/DAddYE/vips, bindings for libvips
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
