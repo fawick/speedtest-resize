@@ -26,7 +26,7 @@ func scanDir(path string) (files []string, hello error) {
 }
 
 type ResizerStat struct {
-	Desc      string        // Description string
+	Resizer   Resizer
 	Total     time.Duration // Total duration for all files
 	Processed int           // Number of processed files
 }
@@ -51,7 +51,11 @@ func (s ResizerStats) WriteTo(w io.Writer) {
 	fmt.Fprintf(w, formatHeader, "Table", " Time (file avg.) ", " Pure Go ")
 	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 30), " ----------------:", ":-------:")
 	for _, st := range s {
-		fmt.Fprintf(w, formatRow, st.Desc, float64(st.Avg())/1e9, "")
+		var pureFlag = ""
+		if st.Resizer.Pure {
+			pureFlag = "   X"
+		}
+		fmt.Fprintf(w, formatRow, st.Resizer.Name, float64(st.Avg())/1e9, pureFlag)
 	}
 	fmt.Fprintln(w)
 }
@@ -59,18 +63,21 @@ func (s ResizerStats) WriteTo(w io.Writer) {
 type ResizerFunc func(oldName, newName string) (int, int64)
 
 type Resizer struct {
-	Desc string // Description string
+	// Name or description
+	Name string
 	// Func opens the image with the old name, resizes it, and saves it under
 	// the new name. It returns the old and the new file size.
 	Func ResizerFunc
+	// true iff Resizer has no dependency on non-Go code or external programs
+	Pure bool
 }
 
 func (r Resizer) Resize(files []string) *ResizerStat {
-	s := ResizerStat{Desc: r.Desc}
+	s := ResizerStat{Resizer: r}
 	for i, origPath := range files {
-		newPath := fmt.Sprintf("%s.thumb.%s.jpg", origPath, r.Desc)
+		newPath := fmt.Sprintf("%s.thumb.%s.jpg", origPath, r.Name)
 		if *verbose {
-			fmt.Printf("File %d w/ %s: ", i+1, s.Desc)
+			fmt.Printf("File %d w/ %s: ", i+1, r.Name)
 		}
 		imgStart := time.Now()
 		n, o := r.Func(origPath, newPath)
@@ -88,8 +95,12 @@ func (r Resizer) Resize(files []string) *ResizerStat {
 
 var RegisteredResizers []Resizer
 
-func RegisterResizer(d string, f func(oldName, newName string) (int, int64)) {
-	RegisteredResizers = append(RegisteredResizers, Resizer{Desc: d, Func: f})
+func RegisterResizer(n string, f func(oldName, newName string) (int, int64)) {
+	RegisteredResizers = append(RegisteredResizers, Resizer{Name: n, Func: f})
+}
+
+func RegisterPureResizer(n string, f func(oldName, newName string) (int, int64)) {
+	RegisteredResizers = append(RegisteredResizers, Resizer{n, f, true})
 }
 
 var verbose = flag.Bool("verbose", false, "Print statistics for every single file processed")

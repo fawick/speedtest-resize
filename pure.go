@@ -17,11 +17,11 @@ import (
 )
 
 func init() {
-	RegisterResizer("imaging_box", resizeImaging)
-	RegisterResizer("gift_box", resizeGift)
-	RegisterResizer("moustaschio_resize", moustachioResize)
-	RegisterResizer("Nfnt_NearestNeighbor", resizeNfntNearestNeighbor)
-	RegisterResizer("rez_bilinear", resizeRezBilinear)
+	RegisterPureResizer("imaging_box", resizeImaging)
+	RegisterPureResizer("gift_box", resizeGift)
+	RegisterPureResizer("moustaschio_resize", moustachioResize)
+	RegisterPureResizer("Nfnt_NearestNeighbor", resizeNfntNearestNeighbor)
+	RegisterPureResizer("rez_bilinear", resizeRezBilinear)
 }
 
 func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFunction) (int, int64) {
