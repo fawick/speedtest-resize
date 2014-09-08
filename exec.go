@@ -24,7 +24,7 @@ func init() {
 	if _, err := exec.LookPath("vipsthumbnail"); err == nil {
 		RegisterResizer("vipsthumbnail", vipsthumbnail)
 	} else {
-		fmt.Println("Cannot find vipsthumbnail in PATH, will skip ImageMagick tests")
+		fmt.Println("Cannot find vipsthumbnail in PATH, will skip VIPS tests")
 	}
 }
 
