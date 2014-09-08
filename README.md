@@ -83,19 +83,19 @@ tool/package.
 The scenario is run on a Intel(R) Pentium(R) Dual T2390 @ 1.86GHz running
 Ubuntu 14.04. Here are the results:
 
-| Tables                            | Time (file avg.)  | Pure Go |
-| --------------------------------- | -----------------:| ------- |
-| `vipsthumbnail`                   | 0.125s            |         |
-| ImageMagick -thumbnail            | 0.325s            |         |
-| github.com/DAddYE/vips            | 0.354s            |         |
-| GraphicsMagick -thumbnail         | 0.752s            |         |
-| github.com/gographics/imagick     | 1.100s            |         |
-| ImageMagick -resize               | 2.286s            |         |
-| rez_bilinear                      | 2.942s            |    X    |
-| github.com/nfnt/resize            | 3.509s            |    X    |
-| github.com/disintegration/gift    | 4.642s            |    X    |
-| github.com/disintegration/imaging | 4.694s            |    X    |
-| Moustachio 'resize.go'            | 7.366s            |    X    |
+| Table                 | Time (avg.) | Size (avg.) | Pure Go |
+|-----------------------|------------:|------------:|:-------:|
+| vipsthumbnail         |      0.120s |      0.065% |         |
+| ImageMagick_thumbnail |      0.326s |      0.242% |         |
+| vips                  |      0.339s |      0.100% |         |
+| magickwand_box        |      1.148s |      0.538% |         |
+| ImageMagick_resize    |      2.316s |      0.626% |         |
+| rez_bilinear          |      2.913s |      0.053% |    X    |
+| Nfnt_NearestNeighbor  |      3.498s |      0.057% |    X    |
+| imaging_box           |      4.734s |      0.057% |    X    |
+| gift_box              |      4.746s |      0.057% |    X    |
+| moustaschio_resize    |      7.124s |      0.057% |    X    |
+
 
 --------
 

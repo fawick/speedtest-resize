@@ -52,11 +52,11 @@ func (b ByAverage) Less(i, j int) bool {
 }
 
 func (s ResizerStats) WriteTo(w io.Writer) {
-	formatHeader := "| %-30s |%-17s|%-17s|%-9s|\n"
+	formatHeader := "|%-32s|%-18s|%-18s|%-9s|\n"
 	formatRow := "| %-30s | %15.3fs | %15.3f%% | %-7s |\n"
 	fmt.Fprintf(w, "\nResults\n-------\n\n")
-	fmt.Fprintf(w, formatHeader, "Table", " Time (file avg.) ", " Size (file avg.) ", " Pure Go ")
-	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 30), " ----------------:", " ----------------:", ":-------:")
+	fmt.Fprintf(w, formatHeader, " Table", " Time (file avg.)", " Size (file avg.)", " Pure Go")
+	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 32), "-----------------:", "-----------------:", ":-------:")
 	for _, st := range s {
 		var pureFlag = ""
 		if st.Resizer.Pure {
@@ -116,9 +116,8 @@ var verbose = flag.Bool("verbose", false, "Print statistics for every single fil
 func main() {
 	flag.Parse()
 	dir := "."
-	if len(flag.Args()) > 1 {
-		fmt.Println(flag.Args())
-		dir = flag.Args()[1]
+	if len(flag.Args()) > 0 {
+		dir = flag.Args()[0]
 	}
 	files, _ := scanDir(dir)
 	if len(files) == 0 {

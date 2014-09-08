@@ -55,7 +55,6 @@ func resizeMagickWand(origName, newName string) (int, int64) {
 		fmt.Println(err)
 		return 0, origFileStat.Size()
 	}
-	fmt.Print("resizing part: ", time.Since(start), ", ")
 
 	newFileStat, _ := os.Stat(newName)
 	return int(newFileStat.Size()), origFileStat.Size()
