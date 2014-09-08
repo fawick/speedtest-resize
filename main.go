@@ -45,9 +45,15 @@ type ByAverage struct{ ResizerStats }
 func (b ByAverage) Less(i, j int) bool { return b.ResizerStats[i].Avg() < b.ResizerStats[j].Avg() }
 
 func (s ResizerStats) WriteTo(w io.Writer) {
+	formatHeader := "| %-30s |%-17s|%-9s|\n"
+	formatRow := "| %-30s | %15.3fs | %-7s |\n"
+	fmt.Fprintf(w, "\nResults\n-------\n\n")
+	fmt.Fprintf(w, formatHeader, "Table", " Time (file avg.) ", " Pure Go ")
+	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 30), " ----------------:", ":-------:")
 	for _, st := range s {
-		fmt.Fprintf(w, "%s: %.3fs\n", st.Desc, float64(st.Avg())/1e9)
+		fmt.Fprintf(w, formatRow, st.Desc, float64(st.Avg())/1e9, "")
 	}
+	fmt.Fprintln(w)
 }
 
 type ResizerFunc func(oldName, newName string) (int, int64)
