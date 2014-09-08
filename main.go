@@ -26,13 +26,18 @@ func scanDir(path string) (files []string, hello error) {
 }
 
 type ResizerStat struct {
-	Resizer   Resizer
-	Total     time.Duration // Total duration for all files
-	Processed int           // Number of processed files
+	Resizer    Resizer
+	Total      time.Duration // Total duration for all files
+	Processed  int           // Number of processed files
+	PercentSum float64
 }
 
-func (s ResizerStat) Avg() time.Duration {
+func (s ResizerStat) TimeAvg() time.Duration {
 	return s.Total / time.Duration(s.Processed)
+}
+
+func (s ResizerStat) SizeAvg() float64 {
+	return s.PercentSum / float64(s.Processed)
 }
 
 type ResizerStats []*ResizerStat
@@ -42,20 +47,22 @@ func (s ResizerStats) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 type ByAverage struct{ ResizerStats }
 
-func (b ByAverage) Less(i, j int) bool { return b.ResizerStats[i].Avg() < b.ResizerStats[j].Avg() }
+func (b ByAverage) Less(i, j int) bool {
+	return b.ResizerStats[i].TimeAvg() < b.ResizerStats[j].TimeAvg()
+}
 
 func (s ResizerStats) WriteTo(w io.Writer) {
-	formatHeader := "| %-30s |%-17s|%-9s|\n"
-	formatRow := "| %-30s | %15.3fs | %-7s |\n"
+	formatHeader := "| %-30s |%-17s|%-17s|%-9s|\n"
+	formatRow := "| %-30s | %15.3fs | %15.3f%% | %-7s |\n"
 	fmt.Fprintf(w, "\nResults\n-------\n\n")
-	fmt.Fprintf(w, formatHeader, "Table", " Time (file avg.) ", " Pure Go ")
-	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 30), " ----------------:", ":-------:")
+	fmt.Fprintf(w, formatHeader, "Table", " Time (file avg.) ", " Size (file avg.) ", " Pure Go ")
+	fmt.Fprintf(w, formatHeader, strings.Repeat("-", 30), " ----------------:", " ----------------:", ":-------:")
 	for _, st := range s {
 		var pureFlag = ""
 		if st.Resizer.Pure {
 			pureFlag = "   X"
 		}
-		fmt.Fprintf(w, formatRow, st.Resizer.Name, float64(st.Avg())/1e9, pureFlag)
+		fmt.Fprintf(w, formatRow, st.Resizer.Name, float64(st.TimeAvg())/1e9, st.SizeAvg(), pureFlag)
 	}
 	fmt.Fprintln(w)
 }
@@ -83,6 +90,7 @@ func (r Resizer) Resize(files []string) *ResizerStat {
 		n, o := r.Func(origPath, newPath)
 		ratio := float64(n) / float64(o) * 100.0
 		dur := time.Since(imgStart)
+		s.PercentSum += ratio
 		s.Processed++
 		s.Total += dur
 		avg := s.Total / time.Duration(s.Processed)
