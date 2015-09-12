@@ -14,6 +14,8 @@ import (
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 	nfnt_resize "github.com/nfnt/resize"
+
+	"golang.org/x/image/draw"
 )
 
 func init() {
@@ -22,6 +24,7 @@ func init() {
 	RegisterPureResizer("moustaschio_resize", moustachioResize)
 	RegisterPureResizer("Nfnt_NearestNeighbor", resizeNfntNearestNeighbor)
 	RegisterPureResizer("rez_bilinear", resizeRezBilinear)
+	RegisterPureResizer("x_image_draw", resizeXImageDraw)
 }
 
 func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFunction) (int, int64) {
@@ -182,5 +185,34 @@ func resizeGift(origName, newName string) (int, int64) {
 		return 0, origFileStat.Size()
 	}
 	b.WriteTo(cacheFile)
+	return blen, origFileStat.Size()
+}
+
+func resizeXImageDraw(origName, newName string) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	p := origImage.Bounds().Size()
+	w, h := 150, getSize(150, p.Y, p.X)
+	if p.X < p.Y {
+		w, h = getSize(150, p.X, p.Y), 150
+	}
+	dst := image.NewNRGBA(image.Rect(0, 0, w, h))
+	draw.Draw(dst, dst.Bounds(), image.White, image.ZP, draw.Src)
+	draw.ApproxBiLinear.Scale(dst, dst.Bounds(), origImage, origImage.Bounds(), draw.Src, nil)
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, dst, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+
 	return blen, origFileStat.Size()
 }
