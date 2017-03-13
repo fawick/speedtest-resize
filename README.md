@@ -18,6 +18,8 @@ are
   algorithms of the package. Here, it's called 'Box'
 - https://github.com/disintegration/imaging Again, I use one of the fastest
   algorithms of the package. Here, it's called 'Box'
+- https://github.com/anthonynsimon/bild A collection of parallel image
+  processing algorithms in pure Go ('NearestNeighbor' algorithm)
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the options `-resize 150x150>`
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the
   options `-define "jpeg:size=300x300 -thumbnail 150x150>`. `-thumbnail` is

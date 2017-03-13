@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"os"
 
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/bamiaux/rez"
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
@@ -23,6 +24,29 @@ func init() {
 	RegisterPureResizer("Nfnt_NearestNeighbor", resizeNfntNearestNeighbor)
 	RegisterPureResizer("rez_bilinear", resizeRezBilinear)
 	RegisterPureResizer("x_image_draw", resizeXImageDraw)
+	RegisterPureResizer("bild_resize", resizeBild)
+}
+
+func resizeBild(origName, newName string) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	resized := transform.Resize(origImage, 150, 150, transform.NearestNeighbor)
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, resized, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+
+	return blen, origFileStat.Size()
 }
 
 func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFunction) (int, int64) {
