@@ -35,6 +35,8 @@ terms of memory footprint) of the original image on reading.
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - External command `vipsthumbnail` with parameters `-s 150`
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
+- External command `epeg` with parameters `-m 150`
+  (https://github.com/mattes/epeg)
 
 ### Installation
 
