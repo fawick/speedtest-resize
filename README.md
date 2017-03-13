@@ -33,6 +33,8 @@ terms of memory footprint) of the original image on reading.
   in these tests
 - https://github.com/DAddYE/vips, bindings for libvips
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
+- https://github.com/daddye/trez, an image resizer build on top of OpenCV and
+  jpeg-turbo
 - External command `vipsthumbnail` with parameters `-s 150`
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - External command `epeg` with parameters `-m 150`
