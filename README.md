@@ -127,6 +127,29 @@ Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel 
 
 --------
 
+A new scenario ran by [nono](https://github.com/nono), 3.4GHz Intel Core i7, Ubuntu 16.10:
+
+| Table                          | Time (file avg.) | Size (file avg.) | Pure Go |
+|--------------------------------|-----------------:|-----------------:|:-------:|
+| ImageMagick_thumbnail          |           0.057s |           0.361% |         |
+| vips                           |           0.070s |           0.260% |         |
+| epeg                           |           0.079s |           0.207% |         |
+| fastjpeg                       |           0.082s |           0.186% |         |
+| opencv                         |           0.110s |           0.597% |         |
+| vipsthumbnail                  |           0.115s |           0.441% |         |
+| GraphicsMagick_thumbnail       |           0.172s |           0.427% |         |
+| magickwand_box                 |           0.190s |           0.575% |         |
+| T-REZ                          |           0.204s |           0.323% |         |
+| rez_bilinear                   |           0.349s |           0.140% |    X    |
+| x_image_draw                   |           0.370s |           0.160% |    X    |
+| imaging_box                    |           0.439s |           0.146% |    X    |
+| gift_box                       |           0.440s |           0.146% |    X    |
+| Nfnt_NearestNeighbor           |           0.447s |           0.146% |    X    |
+| bild_resize                    |           0.515s |           0.206% |    X    |
+| ImageMagick_resize             |           0.568s |           0.542% |         |
+
+--------
+
 So, what is to learn from that? While all of the currently existing
 pure-Go-language solutions do a pretty good job in generating good-looking
 thumbnails, they are much slower than the veteran dedicated image processing
