@@ -18,6 +18,8 @@ are
   algorithms of the package. Here, it's called 'Box'
 - https://github.com/disintegration/imaging Again, I use one of the fastest
   algorithms of the package. Here, it's called 'Box'
+- https://github.com/anthonynsimon/bild A collection of parallel image
+  processing algorithms in pure Go ('NearestNeighbor' algorithm)
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the options `-resize 150x150>`
 - [ImageMagick convert](http://www.imagemagick.org/script/convert.php) with the
   options `-define "jpeg:size=300x300 -thumbnail 150x150>`. `-thumbnail` is
@@ -33,10 +35,15 @@ terms of memory footprint) of the original image on reading.
   in these tests
 - https://github.com/DAddYE/vips, bindings for libvips
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
+- https://github.com/daddye/trez, an image resizer build on top of OpenCV and
+  jpeg-turbo
+- https://camlistore.org/pkg/images/fastjpeg, package fastjpeg uses djpeg(1),
+  from the Independent JPEG Group's (www.ijg.org) jpeg package, to quickly
+  down-sample images on load
 - External command `vipsthumbnail` with parameters `-s 150`
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
-- [resize.go](https://code.google.com/p/appengine-go/source/browse/example/moustachio/resize/resize.go)
-  by the Go authors, which performs a Nearest-Neighbor scaling
+- External command `epeg` with parameters `-m 150`
+  (https://github.com/mattes/epeg)
 
 ### Installation
 
@@ -61,7 +68,8 @@ available:
 | `opencv`    | Include `lazywei/go-opencv` in the tests.               |
 | `imagick`   | Include `gographics/imagick` in the tests.              |
 | `vips`      | Include `DAddYE/vips in the tests`.                     |
-| `all`       | An alias for `opencv imagick vips`.                     |
+| `fastjpeg`  | Include `camlistore/fastjpeg in the tests`.             |
+| `all`       | An alias for `opencv imagick fastjpeg vips`.            |
 | `nopure`    | Don't include the Pure Golang packages                  |
 | `noexec`    | Don't run the tests that execute other programs.        |
 
@@ -94,7 +102,6 @@ Ubuntu 14.04. Here are the results:
 | Nfnt_NearestNeighbor  |      3.498s |      0.057% |    X    |
 | imaging_box           |      4.734s |      0.057% |    X    |
 | gift_box              |      4.746s |      0.057% |    X    |
-| moustaschio_resize    |      7.124s |      0.057% |    X    |
 
 
 --------
@@ -105,7 +112,6 @@ Yet another scenario ran by [lazywei](https://github.com/lazywei), 2.5GHz Intel 
 | -------------------- | ----------------------:|
 | magickwand_box       |  155.371531ms          |
 | imaging_Box          |  463.459339ms          |
-| moustaschio_resize   |  719.051885ms          |
 | Nfnt_NearestNeighbor |  1.436507946s          |
 | OpenCv               |   97.353041ms          |
 
@@ -117,8 +123,30 @@ Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel 
 | -------------------- | ----------------------:|
 | rez_bilinear         |  148ms                 |
 | imaging_Box          |  243ms                 |
-| moustaschio_resize   |  407ms                 |
 | Nfnt_NearestNeighbor |  233ms                 |
+
+--------
+
+A new scenario ran by [nono](https://github.com/nono), 3.4GHz Intel Core i7, Ubuntu 16.10:
+
+| Table                          | Time (file avg.) | Size (file avg.) | Pure Go |
+|--------------------------------|-----------------:|-----------------:|:-------:|
+| ImageMagick_thumbnail          |           0.057s |           0.361% |         |
+| vips                           |           0.070s |           0.260% |         |
+| epeg                           |           0.079s |           0.207% |         |
+| fastjpeg                       |           0.082s |           0.186% |         |
+| opencv                         |           0.110s |           0.597% |         |
+| vipsthumbnail                  |           0.115s |           0.441% |         |
+| GraphicsMagick_thumbnail       |           0.172s |           0.427% |         |
+| magickwand_box                 |           0.190s |           0.575% |         |
+| T-REZ                          |           0.204s |           0.323% |         |
+| rez_bilinear                   |           0.349s |           0.140% |    X    |
+| x_image_draw                   |           0.370s |           0.160% |    X    |
+| imaging_box                    |           0.439s |           0.146% |    X    |
+| gift_box                       |           0.440s |           0.146% |    X    |
+| Nfnt_NearestNeighbor           |           0.447s |           0.146% |    X    |
+| bild_resize                    |           0.515s |           0.206% |    X    |
+| ImageMagick_resize             |           0.568s |           0.542% |         |
 
 --------
 

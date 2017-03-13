@@ -9,7 +9,7 @@ import (
 	"image/jpeg"
 	"os"
 
-	moustaschio_resize "code.google.com/p/appengine-go/example/moustachio/resize"
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/bamiaux/rez"
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
@@ -21,10 +21,32 @@ import (
 func init() {
 	RegisterPureResizer("imaging_box", resizeImaging)
 	RegisterPureResizer("gift_box", resizeGift)
-	RegisterPureResizer("moustaschio_resize", moustachioResize)
 	RegisterPureResizer("Nfnt_NearestNeighbor", resizeNfntNearestNeighbor)
 	RegisterPureResizer("rez_bilinear", resizeRezBilinear)
 	RegisterPureResizer("x_image_draw", resizeXImageDraw)
+	RegisterPureResizer("bild_resize", resizeBild)
+}
+
+func resizeBild(origName, newName string) (int, int64) {
+	origFile, _ := os.Open(origName)
+	origImage, _ := jpeg.Decode(origFile)
+	origFileStat, _ := origFile.Stat()
+	origFile.Close()
+
+	resized := transform.Resize(origImage, 150, 150, transform.NearestNeighbor)
+
+	b := new(bytes.Buffer)
+	jpeg.Encode(b, resized, nil)
+	blen := b.Len()
+	cacheFile, err := os.Create(newName)
+	defer cacheFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	b.WriteTo(cacheFile)
+
+	return blen, origFileStat.Size()
 }
 
 func resizeNfnt(origName, newName string, interp nfnt_resize.InterpolationFunction) (int, int64) {
@@ -100,41 +122,6 @@ func resizeRez(origName, newName string, filter rez.Filter) (int, int64) {
 
 func resizeRezBilinear(origName, newName string) (int, int64) {
 	return resizeRez(origName, newName, rez.NewBilinearFilter())
-}
-
-func moustachioResample(origName, newName string) (int, int64) {
-	return resizeMoustachio(origName, newName, moustaschio_resize.Resample)
-}
-
-func moustachioResize(origName, newName string) (int, int64) {
-	return resizeMoustachio(origName, newName, moustaschio_resize.Resize)
-}
-
-func resizeMoustachio(origName, newName string, method func(image.Image, image.Rectangle, int, int) image.Image) (int, int64) {
-	origFile, _ := os.Open(origName)
-	origImage, _ := jpeg.Decode(origFile)
-	origFileStat, _ := origFile.Stat()
-	origFile.Close()
-
-	var resized image.Image
-	p := origImage.Bounds().Size()
-	if p.X > p.Y {
-		resized = method(origImage, origImage.Bounds(), 150, 100)
-	} else {
-		resized = method(origImage, origImage.Bounds(), 100, 150)
-	}
-	b := new(bytes.Buffer)
-	jpeg.Encode(b, resized, nil)
-	blen := b.Len()
-	cacheFile, err := os.Create(newName)
-	defer cacheFile.Close()
-	if err != nil {
-		fmt.Println(err)
-		return 0, origFileStat.Size()
-	}
-	b.WriteTo(cacheFile)
-
-	return blen, origFileStat.Size()
 }
 
 func resizeImaging(origName, newName string) (int, int64) {

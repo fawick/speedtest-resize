@@ -26,6 +26,31 @@ func init() {
 	} else {
 		fmt.Println("Cannot find vipsthumbnail in PATH, will skip VIPS tests")
 	}
+	if _, err := exec.LookPath("epeg"); err == nil {
+		RegisterResizer("epeg", epegThumbnail)
+	} else {
+		fmt.Println("Cannot find epeg in PATH, will skip epeg tests")
+	}
+}
+
+func epegThumbnail(origName, newName string) (int, int64) {
+	origFileStat, _ := os.Stat(origName)
+	var args = []string{
+		"-m", "150",
+		origName,
+		newName,
+	}
+
+	var cmd *exec.Cmd
+	path, _ := exec.LookPath("epeg")
+	cmd = exec.Command(path, args...)
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		return 0, origFileStat.Size()
+	}
+	newFileStat, _ := os.Stat(newName)
+	return int(newFileStat.Size()), origFileStat.Size()
 }
 
 func vipsthumbnail(origName, newName string) (int, int64) {
