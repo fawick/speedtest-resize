@@ -35,8 +35,6 @@ terms of memory footprint) of the original image on reading.
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - External command `vipsthumbnail` with parameters `-s 150`
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
-- [resize.go](https://code.google.com/p/appengine-go/source/browse/example/moustachio/resize/resize.go)
-  by the Go authors, which performs a Nearest-Neighbor scaling
 
 ### Installation
 
@@ -94,7 +92,6 @@ Ubuntu 14.04. Here are the results:
 | Nfnt_NearestNeighbor  |      3.498s |      0.057% |    X    |
 | imaging_box           |      4.734s |      0.057% |    X    |
 | gift_box              |      4.746s |      0.057% |    X    |
-| moustaschio_resize    |      7.124s |      0.057% |    X    |
 
 
 --------
@@ -105,7 +102,6 @@ Yet another scenario ran by [lazywei](https://github.com/lazywei), 2.5GHz Intel 
 | -------------------- | ----------------------:|
 | magickwand_box       |  155.371531ms          |
 | imaging_Box          |  463.459339ms          |
-| moustaschio_resize   |  719.051885ms          |
 | Nfnt_NearestNeighbor |  1.436507946s          |
 | OpenCv               |   97.353041ms          |
 
@@ -117,7 +113,6 @@ Yet another scenario ran by [bamiaux](https://github.com/bamiaux), 3.3GHz Intel 
 | -------------------- | ----------------------:|
 | rez_bilinear         |  148ms                 |
 | imaging_Box          |  243ms                 |
-| moustaschio_resize   |  407ms                 |
 | Nfnt_NearestNeighbor |  233ms                 |
 
 --------
