@@ -37,6 +37,9 @@ terms of memory footprint) of the original image on reading.
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - https://github.com/daddye/trez, an image resizer build on top of OpenCV and
   jpeg-turbo
+- https://camlistore.org/pkg/images/fastjpeg, package fastjpeg uses djpeg(1),
+  from the Independent JPEG Group's (www.ijg.org) jpeg package, to quickly
+  down-sample images on load
 - External command `vipsthumbnail` with parameters `-s 150`
   (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
 - External command `epeg` with parameters `-m 150`
@@ -65,7 +68,8 @@ available:
 | `opencv`    | Include `lazywei/go-opencv` in the tests.               |
 | `imagick`   | Include `gographics/imagick` in the tests.              |
 | `vips`      | Include `DAddYE/vips in the tests`.                     |
-| `all`       | An alias for `opencv imagick vips`.                     |
+| `fastjpeg`  | Include `camlistore/fastjpeg in the tests`.             |
+| `all`       | An alias for `opencv imagick fastjpeg vips`.            |
 | `nopure`    | Don't include the Pure Golang packages                  |
 | `noexec`    | Don't run the tests that execute other programs.        |
 
