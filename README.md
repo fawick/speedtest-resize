@@ -41,7 +41,7 @@ terms of memory footprint) of the original image on reading.
   from the Independent JPEG Group's (www.ijg.org) jpeg package, to quickly
   down-sample images on load
 - External command `vipsthumbnail` with parameters `-s 150`
-  (http://www.vips.ecs.soton.ac.uk/index.php?title=Libvips)
+  (https://github.com/libvips/libvips)
 - External command `epeg` with parameters `-m 150`
   (https://github.com/mattes/epeg)
 
