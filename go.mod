@@ -1,6 +1,6 @@
 module github.com/fawick/speedtest-resize
 
-go 1.13
+go 1.25.0
 
 require (
 	github.com/anthonynsimon/bild v0.10.0
@@ -8,5 +8,5 @@ require (
 	github.com/disintegration/gift v1.2.1
 	github.com/disintegration/imaging v1.6.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
-	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
+	golang.org/x/image v0.43.0
 )
