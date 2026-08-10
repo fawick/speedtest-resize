@@ -47,6 +47,8 @@ terms of memory footprint) of the original image on reading.
 
 ### Installation
 
+The default pure-Go build requires Go 1.25 or newer.
+
 To run the tests `go get` the source and compile/run it:
 
     $ go get -u github.com/fawick/speedtest-resize -tags all
