@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+go_version="1.25.12"
+go_archive="go${go_version}.linux-amd64.tar.gz"
+go_checksum="234828b7a89e0e303d2556310ee549fbcf253d28de937bac3da13d6294262ac1"
+install_root="$HOME/.local/share/go/go${go_version}"
+archive_path="$HOME/.cache/amp/toolchains/$go_archive"
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "[setup] Installing curl"
+  sudo apt-get update
+  sudo apt-get install -y curl ca-certificates
+fi
+
+started=$SECONDS
+echo "[setup] Ensuring Go ${go_version} is installed"
+if [[ ! -x "$install_root/bin/go" ]] || [[ "$($install_root/bin/go version)" != "go version go${go_version} linux/amd64" ]]; then
+  mkdir -p "$(dirname "$archive_path")" "$(dirname "$install_root")" "$HOME/.local/bin"
+
+  if [[ ! -f "$archive_path" ]] || ! echo "$go_checksum  $archive_path" | sha256sum --check --status; then
+    curl --fail --location --silent --show-error \
+      "https://go.dev/dl/$go_archive" \
+      --output "$archive_path"
+  fi
+  echo "$go_checksum  $archive_path" | sha256sum --check --status
+
+  staging="$(mktemp -d "$(dirname "$install_root")/.go${go_version}.XXXXXX")"
+  trap 'rm -rf "$staging"' EXIT
+  tar -C "$staging" -xzf "$archive_path"
+  rm -rf "$install_root"
+  mv "$staging/go" "$install_root"
+  rmdir "$staging"
+  trap - EXIT
+fi
+
+mkdir -p "$HOME/.local/bin"
+ln -sfn "$install_root/bin/go" "$HOME/.local/bin/go"
+ln -sfn "$install_root/bin/gofmt" "$HOME/.local/bin/gofmt"
+echo "[setup] Go ready in $((SECONDS - started))s"
+
+started=$SECONDS
+echo "[setup] Downloading Go modules"
+"$install_root/bin/go" mod download
+echo "[setup] Go modules ready in $((SECONDS - started))s"

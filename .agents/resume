@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v go >/dev/null 2>&1; then
+  echo "[resume] Go is unavailable; run .agents/setup to repair the orb" >&2
+  exit 1
+fi
+
+echo "[resume] Orb environment is ready"
