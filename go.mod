@@ -1,6 +1,6 @@
 module github.com/fawick/speedtest-resize
 
-go 1.25.0
+go 1.26.0
 
 require (
 	camlistore.org v0.0.0-20171230002226-a5a65f0d8b22
@@ -12,7 +12,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/lazywei/go-opencv v0.0.0-20190115070742-a4fe8ec027cc
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
-	golang.org/x/image v0.45.0
+	golang.org/x/image v0.46.0
 	gopkg.in/gographics/imagick.v2 v2.7.1
 )
 
