@@ -2,8 +2,8 @@ camlistore.org v0.0.0-20171230002226-a5a65f0d8b22 h1:VP9VuyosMHmS9zdzd5Co9TJKWPb
 camlistore.org v0.0.0-20171230002226-a5a65f0d8b22/go.mod h1:mzAP6ICVzPdfO0f3N9hAVWhO7qplHF7mbFhGsGdErTI=
 github.com/DAddYE/vips v0.0.0-20170307215529-87cfaf94f7a1 h1:PqN67eMwgNYHsMK/f/0cmgfeqIgdFVgzGKsP1VxJwfc=
 github.com/DAddYE/vips v0.0.0-20170307215529-87cfaf94f7a1/go.mod h1:Z/yQH1IJmSrzXxhNX0AJ4t4cCccw0KryeyvTrxo68j8=
-github.com/anthonynsimon/bild v0.17.0 h1:kmPJOZpUgvrM2uoS7KMesbDU5+QTvZ92zIBjHM/oa18=
-github.com/anthonynsimon/bild v0.17.0/go.mod h1:ULwssBwK+8dLFObGrI3fIydKYQ2l454Y0eo+mqPclto=
+github.com/anthonynsimon/bild v0.17.1 h1:CVcoR+jxUx++UBXpVJHTjt7RmfEbsnhtlqPR5utSfiU=
+github.com/anthonynsimon/bild v0.17.1/go.mod h1:eUfWJXV5GGXA2Gobz4osvpJdkdEVZpXwDSJi/PAXnpA=
 github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b h1:5Ci5wpOL75rYF6RQGRoqhEAU6xLJ6n/D4SckXX1yB74=
 github.com/bamiaux/rez v0.0.0-20170731184118-29f4463c688b/go.mod h1:obBQGGIFbbv9KWg92Qu9UHeD94JXmHD1jovY/z6I3O8=
 github.com/daddye/trez v0.0.0-20141126044701-9e7d4344bceb h1:hl9Pb37fOfXPA6nkroYYkxH1oOrHxOH3Ey5Hd5ngEGE=
