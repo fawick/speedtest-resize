@@ -12,7 +12,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/lazywei/go-opencv v0.0.0-20190115070742-a4fe8ec027cc
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
-	golang.org/x/image v0.46.0
+	golang.org/x/image v0.47.0
 	gopkg.in/gographics/imagick.v2 v2.7.1
 )
 
